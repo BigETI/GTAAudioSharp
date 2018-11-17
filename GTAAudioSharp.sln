@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTAAudioSharp", "GTAAudioSharp\GTAAudioSharp.csproj", "{7B6A127F-9D90-420D-A736-13179E0B4709}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GTAAudioSharpUnitTest", "GTAAudioSharpUnitTest\GTAAudioSharpUnitTest.csproj", "{BA376496-AA15-4A31-930B-E6073259E6F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B6A127F-9D90-420D-A736-13179E0B4709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B6A127F-9D90-420D-A736-13179E0B4709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B6A127F-9D90-420D-A736-13179E0B4709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B6A127F-9D90-420D-A736-13179E0B4709}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA376496-AA15-4A31-930B-E6073259E6F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA376496-AA15-4A31-930B-E6073259E6F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA376496-AA15-4A31-930B-E6073259E6F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA376496-AA15-4A31-930B-E6073259E6F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6A88D46F-3E25-4B8F-8370-B59BD82C770A}
+	EndGlobalSection
+EndGlobal
