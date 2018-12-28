@@ -33,6 +33,11 @@ namespace GTAAudioSharp
         private Dictionary<string, uint> streamsFilesLookup;
 
         /// <summary>
+        /// Volume
+        /// </summary>
+        private sbyte[] volume;
+
+        /// <summary>
         /// SFX audio files
         /// </summary>
         public GTAAudioSFXFile[] SFXAudioFiles
@@ -69,12 +74,14 @@ namespace GTAAudioSharp
         /// <param name="streamsAudioFiles">Streams audio banks files</param>
         /// <param name="sfxFilesLookup">SFX banks files lookup</param>
         /// <param name="streamsFilesLookup">Streams banks files lookup</param>
-        internal GTAAudioFiles(GTAAudioSFXFile[] sfxAudioFiles, GTAAudioStreamsFile[] streamsAudioFiles, Dictionary<string, uint> sfxFilesLookup, Dictionary<string, uint> streamsFilesLookup)
+        /// <param name="volume">Volume</param>
+        internal GTAAudioFiles(GTAAudioSFXFile[] sfxAudioFiles, GTAAudioStreamsFile[] streamsAudioFiles, Dictionary<string, uint> sfxFilesLookup, Dictionary<string, uint> streamsFilesLookup, sbyte[] volume)
         {
             this.sfxAudioFiles = sfxAudioFiles;
             this.streamsAudioFiles = streamsAudioFiles;
             this.sfxFilesLookup = sfxFilesLookup;
             this.streamsFilesLookup = streamsFilesLookup;
+            this.volume = volume;
         }
 
         /// <summary>
@@ -214,6 +221,16 @@ namespace GTAAudioSharp
                 ret = new GTAAudioBeatData[0];
             }
             return ret;
+        }
+
+        /// <summary>
+        /// Get volume
+        /// </summary>
+        /// <param name="index">Event index</param>
+        /// <returns>Volume</returns>
+        public sbyte GetVolume(uint index)
+        {
+            return ((index < volume.Length) ? volume[index] : (sbyte)0);
         }
 
         /// <summary>
