@@ -33,9 +33,9 @@ namespace GTAAudioSharp
         private Dictionary<string, uint> streamsFilesLookup;
 
         /// <summary>
-        /// Volume
+        /// Script event volume
         /// </summary>
-        private sbyte[] volume;
+        private byte[] scriptEventVolume;
 
         /// <summary>
         /// SFX audio files
@@ -68,20 +68,31 @@ namespace GTAAudioSharp
         }
 
         /// <summary>
+        /// Number of events
+        /// </summary>
+        public int NumScriptEvents
+        {
+            get
+            {
+                return ((scriptEventVolume == null) ? 0 : scriptEventVolume.Length);
+            }
+        }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="sfxAudioFiles">SFX audio banks files</param>
         /// <param name="streamsAudioFiles">Streams audio banks files</param>
         /// <param name="sfxFilesLookup">SFX banks files lookup</param>
         /// <param name="streamsFilesLookup">Streams banks files lookup</param>
-        /// <param name="volume">Volume</param>
-        internal GTAAudioFiles(GTAAudioSFXFile[] sfxAudioFiles, GTAAudioStreamsFile[] streamsAudioFiles, Dictionary<string, uint> sfxFilesLookup, Dictionary<string, uint> streamsFilesLookup, sbyte[] volume)
+        /// <param name="scriptEventVolume">Script event volume</param>
+        internal GTAAudioFiles(GTAAudioSFXFile[] sfxAudioFiles, GTAAudioStreamsFile[] streamsAudioFiles, Dictionary<string, uint> sfxFilesLookup, Dictionary<string, uint> streamsFilesLookup, byte[] scriptEventVolume)
         {
             this.sfxAudioFiles = sfxAudioFiles;
             this.streamsAudioFiles = streamsAudioFiles;
             this.sfxFilesLookup = sfxFilesLookup;
             this.streamsFilesLookup = streamsFilesLookup;
-            this.volume = volume;
+            this.scriptEventVolume = scriptEventVolume;
         }
 
         /// <summary>
@@ -122,7 +133,7 @@ namespace GTAAudioSharp
         /// <param name="sfxName">SFX name</param>
         /// <param name="bankIndex">Bank index</param>
         /// <param name="audioIndex">Audio index</param>
-        /// <returns>GTA audio stream</returns>
+        /// <returns>GTA audio stream if successful, otherwise "null"</returns>
         public GTAAudioStream OpenSFXAudioStreamByName(string sfxName, uint bankIndex, uint audioIndex)
         {
             GTAAudioStream ret = null;
@@ -138,11 +149,26 @@ namespace GTAAudioSharp
         }
 
         /// <summary>
+        /// Open SFX audio stream by script event index
+        /// </summary>
+        /// <param name="eventIndex"></param>
+        /// <returns>GTA audio stream if successful, otherwise "null"</returns>
+        public GTAAudioStream OpenSFXAudioStreamByScriptEventIndex(uint eventIndex)
+        {
+            GTAAudioStream ret = null;
+            if (eventIndex >= 2000U)
+            {
+                ret = OpenSFXAudioStreamByName("SCRIPT", (eventIndex - 2000U) / 200U, (eventIndex - 2000) % 200);
+            }
+            return ret;
+        }
+
+        /// <summary>
         /// Open streams audio stream by index
         /// </summary>
         /// <param name="streamsIndex">Streams index</param>
         /// <param name="bankIndex">Bank Index</param>
-        /// <returns>GTA audio stream</returns>
+        /// <returns>GTA audio stream if successful, otherwise "null"</returns>
         public Stream OpenStreamsAudioStreamByID(uint streamsIndex, uint bankIndex)
         {
             Stream ret = null;
@@ -224,13 +250,65 @@ namespace GTAAudioSharp
         }
 
         /// <summary>
-        /// Get volume
+        /// Get SFX audio file
         /// </summary>
-        /// <param name="index">Event index</param>
-        /// <returns>Volume</returns>
-        public sbyte GetVolume(uint index)
+        /// <param name="index">Index</param>
+        /// <returns>SFX audio file if successful, otherwise "null"</returns>
+        public GTAAudioSFXFile GetSFXAudioFile(uint index)
         {
-            return ((index < volume.Length) ? volume[index] : (sbyte)0);
+            return ((sfxAudioFiles == null) ? null : ((index < sfxAudioFiles.Length) ? sfxAudioFiles[index] : null));
+        }
+
+        /// <summary>
+        /// Get streams audio file
+        /// </summary>
+        /// <param name="index">Index</param>
+        /// <returns>Streams audio file if successful, otherwise "null"</returns>
+        public GTAAudioStreamsFile GetStreamsAudioFile(uint index)
+        {
+            return ((streamsAudioFiles == null) ? null : ((index < streamsAudioFiles.Length) ? streamsAudioFiles[index] : null));
+        }
+
+        /// <summary>
+        /// Get script event volume
+        /// </summary>
+        /// <param name="index">Script event index</param>
+        /// <returns>Volume</returns>
+        public sbyte GetScriptEventVolume(uint index)
+        {
+            return ((index < scriptEventVolume.Length) ? (sbyte)(scriptEventVolume[index]) : (sbyte)0);
+        }
+
+        /// <summary>
+        /// Get SFX file index by name
+        /// </summary>
+        /// <param name="sfxName">SFX name</param>
+        /// <returns>SFX index if successful, otherwise "-1"</returns>
+        public int GetSFXFileIndexByName(string sfxName)
+        {
+            int ret = -1;
+            string key = sfxName.Trim().ToLower();
+            if (sfxFilesLookup.ContainsKey(key))
+            {
+                ret = (int)(sfxFilesLookup[key]);
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Get streams file index by name
+        /// </summary>
+        /// <param name="streamsName">Streams name</param>
+        /// <returns>SFX index if successful, otherwise "-1"</returns>
+        public int GetStreamsFileIndexByName(string streamsName)
+        {
+            int ret = -1;
+            string key = streamsName.Trim().ToLower();
+            if (streamsFilesLookup.ContainsKey(key))
+            {
+                ret = (int)(streamsFilesLookup[key]);
+            }
+            return ret;
         }
 
         /// <summary>

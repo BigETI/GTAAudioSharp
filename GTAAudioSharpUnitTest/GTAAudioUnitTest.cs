@@ -108,19 +108,21 @@ namespace GTAAudioSharpUnitTest
             using (GTAAudioFiles files = GTAAudio.OpenRead(Config.AudioFilesDir))
             {
                 Assert.IsNotNull(files, "Files can't be opened. Please configure \"" + configPath + "\".");
-                Assert.IsTrue(files.SFXAudioFiles.Length == validSFXFiles.Length, "Missing SFX file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
-                for (int i = 0; i < files.SFXAudioFiles.Length; i++)
+                GTAAudioSFXFile[] sfx_audio_files = files.SFXAudioFiles;
+                Assert.IsTrue(sfx_audio_files.Length == validSFXFiles.Length, "Missing SFX file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
+                for (int i = 0; i < sfx_audio_files.Length; i++)
                 {
-                    GTAAudioSFXFile sfx_audio_file = files.SFXAudioFiles[i];
+                    GTAAudioSFXFile sfx_audio_file = sfx_audio_files[i];
                     if (sfx_audio_file != null)
                     {
                         Assert.IsTrue(sfx_audio_file.Name == validSFXFiles[i], "SFX file \"" + sfx_audio_file.Name + "\" is not \"" + validSFXFiles[i] + "\" at index " + i);
                     }
                 }
-                Assert.IsTrue(files.StreamsAudioFiles.Length == validStreamsFiles.Length, "Missing streams file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
-                for (int i = 0; i < files.SFXAudioFiles.Length; i++)
+                GTAAudioStreamsFile[] streams_audio_files = files.StreamsAudioFiles;
+                Assert.IsTrue(streams_audio_files.Length == validStreamsFiles.Length, "Missing streams file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
+                for (int i = 0; i < streams_audio_files.Length; i++)
                 {
-                    GTAAudioStreamsFile streams_audio_file = files.StreamsAudioFiles[i];
+                    GTAAudioStreamsFile streams_audio_file = streams_audio_files[i];
                     if (streams_audio_file != null)
                     {
                         Assert.IsTrue(streams_audio_file.Name == validStreamsFiles[i], "Streams file \"" + streams_audio_file.Name + "\" is not \"" + validStreamsFiles[i] + "\" at index " + i);

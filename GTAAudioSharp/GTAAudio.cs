@@ -96,7 +96,7 @@ namespace GTAAudioSharp
                                 List<GTAAudioLookupData>[] streams_lookup;
                                 Dictionary<string, uint> sfx_files_lookup = new Dictionary<string, uint>();
                                 Dictionary<string, uint> streams_files_lookup = new Dictionary<string, uint>();
-                                sbyte[] volume = null;
+                                byte[] volume = null;
                                 using (FileStream stream = File.Open(pak_files_dat_path, FileMode.Open))
                                 {
                                     long stream_length = stream.Length;
@@ -317,15 +317,15 @@ namespace GTAAudioSharp
                                 }
                                 using (FileStream stream = File.Open(event_volume_dat_path, FileMode.Open))
                                 {
-                                    byte[] unsigned_volume = new byte[stream.Length];
-                                    if (stream.Read(unsigned_volume, 0, unsigned_volume.Length) == 0)
+                                    volume = new byte[stream.Length];
+                                    if (stream.Read(volume, 0, volume.Length) != volume.Length)
                                     {
-                                        volume = (sbyte[])((Array)unsigned_volume);
+                                        volume = new byte[0];
                                     }
                                 }
                                 if (volume == null)
                                 {
-                                    volume = new sbyte[0];
+                                    volume = new byte[0];
                                 }
                                 ret = new GTAAudioFiles(sfx_audio_files, streams_audio_files, sfx_files_lookup, streams_files_lookup, volume);
                             }
