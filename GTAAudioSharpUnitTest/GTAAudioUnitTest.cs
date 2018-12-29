@@ -81,7 +81,7 @@ namespace GTAAudioSharpUnitTest
                 {
                     if (File.Exists(configPath))
                     {
-                        using (FileStream stream = File.Open(configPath, FileMode.Open))
+                        using (FileStream stream = File.Open(configPath, FileMode.Open, FileAccess.Read))
                         {
                             config = configSerializer.ReadObject(stream) as UnitTestConfigDataContract;
                         }

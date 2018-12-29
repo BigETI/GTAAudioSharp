@@ -205,7 +205,7 @@ namespace GTAAudioSharp
                                 {
                                     streams_lookup[i] = new List<GTAAudioLookupData>();
                                 }
-                                using (FileStream stream = File.Open(trak_lookup_dat_path, FileMode.Open))
+                                using (FileStream stream = File.Open(trak_lookup_dat_path, FileMode.Open, FileAccess.Read))
                                 {
                                     using (BinaryReader reader = new BinaryReader(stream))
                                     {
@@ -315,7 +315,7 @@ namespace GTAAudioSharp
                                     streams_audio_files[i] = new GTAAudioStreamsFile(streams_file, stream, streams_lookup[i].ToArray(), beats_data);
                                     streams_lookup[i].Clear();
                                 }
-                                using (FileStream stream = File.Open(event_volume_dat_path, FileMode.Open))
+                                using (FileStream stream = File.Open(event_volume_dat_path, FileMode.Open, FileAccess.Read))
                                 {
                                     volume = new byte[stream.Length];
                                     if (stream.Read(volume, 0, volume.Length) != volume.Length)
