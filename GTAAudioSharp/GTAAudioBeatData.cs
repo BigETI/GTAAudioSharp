@@ -11,34 +11,12 @@ namespace GTAAudioSharp
         /// <summary>
         /// Timing
         /// </summary>
-        private uint timing;
+        public readonly uint Timing;
 
         /// <summary>
         /// Control
         /// </summary>
-        private uint control;
-
-        /// <summary>
-        /// Timing
-        /// </summary>
-        private uint Timing
-        {
-            get
-            {
-                return timing;
-            }
-        }
-
-        /// <summary>
-        /// Control
-        /// </summary>
-        private uint Control
-        {
-            get
-            {
-                return control;
-            }
-        }
+        public readonly uint Control;
 
         /// <summary>
         /// Constructor
@@ -47,8 +25,8 @@ namespace GTAAudioSharp
         /// <param name="control">Control</param>
         public GTAAudioBeatData(uint timing, uint control)
         {
-            this.timing = timing;
-            this.control = control;
+            Timing = timing;
+            Control = control;
         }
     }
 }

@@ -11,17 +11,30 @@ namespace GTAAudioSharp
         /// <summary>
         /// Sample rate
         /// </summary>
-        private ushort sampleRate;
+        public readonly ushort SampleRate;
 
         /// <summary>
-        /// Sample rate
+        /// Loop offset
         /// </summary>
-        public ushort SampleRate
+        public readonly uint LoopOffset;
+
+        /// <summary>
+        /// Sound headroom
+        /// </summary>
+        public readonly uint SoundHeadroom;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="gtaAudioFile">GTA audio file</param>
+        /// <param name="sampleRate">Sample rate</param>
+        /// <param name="loopOffset">Loop offset</param>
+        /// <param name="soundHeadroom">Loop offset</param>
+        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, uint loopOffset, uint soundHeadroom) : base(gtaAudioFile)
         {
-            get
-            {
-                return sampleRate;
-            }
+            SampleRate = sampleRate;
+            LoopOffset = loopOffset;
+            SoundHeadroom = soundHeadroom;
         }
 
         /// <summary>
@@ -29,20 +42,13 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
-        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate) : base(gtaAudioFile)
-        {
-            this.sampleRate = sampleRate;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="gtaAudioFile">GTA audio file</param>
-        /// <param name="sampleRate">Sample rate</param>
+        /// <param name="loopOffset">Loop offset</param>
         /// <param name="buffer">Buffer</param>
-        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, byte[] buffer) : base(gtaAudioFile, buffer)
+        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, uint loopOffset, uint soundHeadroom, byte[] buffer) : base(gtaAudioFile, buffer)
         {
-            this.sampleRate = sampleRate;
+            SampleRate = sampleRate;
+            LoopOffset = loopOffset;
+            SoundHeadroom = soundHeadroom;
         }
 
         /// <summary>
@@ -50,10 +56,13 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
+        /// <param name="loopOffset">Loop offset</param>
         /// <param name="capacity">Capacity</param>
-        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, int capacity) : base(gtaAudioFile, capacity)
+        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, uint loopOffset, uint soundHeadroom, int capacity) : base(gtaAudioFile, capacity)
         {
-            this.sampleRate = sampleRate;
+            SampleRate = sampleRate;
+            LoopOffset = loopOffset;
+            SoundHeadroom = soundHeadroom;
         }
 
         /// <summary>
@@ -61,11 +70,14 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
+        /// <param name="loopOffset">Loop offset</param>
         /// <param name="buffer">Buffer</param>
         /// <param name="writable">Writable</param>
-        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, byte[] buffer, bool writable) : base(gtaAudioFile, buffer, writable)
+        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, uint loopOffset, uint soundHeadroom, byte[] buffer, bool writable) : base(gtaAudioFile, buffer, writable)
         {
-            this.sampleRate = sampleRate;
+            SampleRate = sampleRate;
+            LoopOffset = loopOffset;
+            SoundHeadroom = soundHeadroom;
         }
 
         /// <summary>
@@ -73,12 +85,15 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
+        /// <param name="loopOffset">Loop offset</param>
         /// <param name="buffer">Buffer</param>
         /// <param name="index">Index</param>
         /// <param name="count">Count</param>
-        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, byte[] buffer, int index, int count) : base(gtaAudioFile, buffer, index, count)
+        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, uint loopOffset, uint soundHeadroom, byte[] buffer, int index, int count) : base(gtaAudioFile, buffer, index, count)
         {
-            this.sampleRate = sampleRate;
+            SampleRate = sampleRate;
+            LoopOffset = loopOffset;
+            SoundHeadroom = soundHeadroom;
         }
 
         /// <summary>
@@ -86,13 +101,16 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
+        /// <param name="loopOffset">Loop offset</param>
         /// <param name="buffer">Buffer</param>
         /// <param name="index">Index</param>
         /// <param name="count">Count</param>
         /// <param name="writable">Writable</param>
-        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, byte[] buffer, int index, int count, bool writable) : base(gtaAudioFile, buffer, index, count, writable)
+        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, uint loopOffset, uint soundHeadroom, byte[] buffer, int index, int count, bool writable) : base(gtaAudioFile, buffer, index, count, writable)
         {
-            this.sampleRate = sampleRate;
+            SampleRate = sampleRate;
+            LoopOffset = loopOffset;
+            SoundHeadroom = soundHeadroom;
         }
 
         /// <summary>
@@ -100,14 +118,17 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
+        /// <param name="loopOffset">Loop offset</param>
         /// <param name="buffer">Buffer</param>
         /// <param name="index">Index</param>
         /// <param name="count">Count</param>
         /// <param name="writable">Writable</param>
         /// <param name="publiclyVisible">Publicly visible</param>
-        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, byte[] buffer, int index, int count, bool writable, bool publiclyVisible) : base(gtaAudioFile, buffer, index, count, writable, publiclyVisible)
+        internal GTAAudioStream(AGTAAudioFile gtaAudioFile, ushort sampleRate, uint loopOffset, uint soundHeadroom, byte[] buffer, int index, int count, bool writable, bool publiclyVisible) : base(gtaAudioFile, buffer, index, count, writable, publiclyVisible)
         {
-            this.sampleRate = sampleRate;
+            SampleRate = sampleRate;
+            LoopOffset = loopOffset;
+            SoundHeadroom = soundHeadroom;
         }
     }
 }

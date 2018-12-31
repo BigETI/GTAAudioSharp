@@ -1,6 +1,7 @@
 ﻿using GTAAudioSharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Json;
 
@@ -110,12 +111,31 @@ namespace GTAAudioSharpUnitTest
                 Assert.IsNotNull(files, "Files can't be opened. Please configure \"" + configPath + "\".");
                 GTAAudioSFXFile[] sfx_audio_files = files.SFXAudioFiles;
                 Assert.IsTrue(sfx_audio_files.Length == validSFXFiles.Length, "Missing SFX file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
-                for (int i = 0; i < sfx_audio_files.Length; i++)
+                for (int i = 0, j; i < sfx_audio_files.Length; i++)
                 {
                     GTAAudioSFXFile sfx_audio_file = sfx_audio_files[i];
                     if (sfx_audio_file != null)
                     {
                         Assert.IsTrue(sfx_audio_file.Name == validSFXFiles[i], "SFX file \"" + sfx_audio_file.Name + "\" is not \"" + validSFXFiles[i] + "\" at index " + i);
+                        /*Debug.WriteLine(sfx_audio_file.Name);
+                        Debug.WriteLine("\tNumber of audios: " + sfx_audio_file.NumAudios);
+                        Debug.WriteLine("\tNumber of banks: " + sfx_audio_file.NumBanks);
+                        for (j = 0; j < sfx_audio_file.AudioData.Length; j++)
+                        {
+                            GTAAudioSFXDataInfo audio_data = sfx_audio_file.AudioData[j];
+                            Debug.WriteLine("\t\t" + sfx_audio_file.Name + " audio " + j + ":");
+                            Debug.WriteLine("\t\t\tSample rate: " + audio_data.SampleRate);
+                            Debug.WriteLine("\t\t\tSound buffer offset: " + audio_data.SoundBufferOffset);
+                            Debug.WriteLine("\t\t\tLoop offset: " + audio_data.LoopOffset);
+                            Debug.WriteLine("\t\t\tSound headroom: " + audio_data.SoundHeadroom);
+                        }
+                        for (j = 0; j < sfx_audio_file.LookupData.Length; j++)
+                        {
+                            GTAAudioLookupData lookup_data = sfx_audio_file.LookupData[j];
+                            Debug.WriteLine("\t\t" + sfx_audio_file.Name + " bank " + j + ":");
+                            Debug.WriteLine("\t\t\tLength: " + lookup_data.Length);
+                            Debug.WriteLine("\t\t\tOffset: " + lookup_data.Offset);
+                        }*/
                     }
                 }
                 GTAAudioStreamsFile[] streams_audio_files = files.StreamsAudioFiles;
@@ -128,6 +148,13 @@ namespace GTAAudioSharpUnitTest
                         Assert.IsTrue(streams_audio_file.Name == validStreamsFiles[i], "Streams file \"" + streams_audio_file.Name + "\" is not \"" + validStreamsFiles[i] + "\" at index " + i);
                     }
                 }
+                /*Debug.WriteLine("SFX bank slots: " + files.NumSFXBankSlots);
+                GTAAudioBankSlotData[] sfx_bank_slots = files.SFXBankSlots;
+                for (int i = 0; i < sfx_bank_slots.Length; i++)
+                {
+                    GTAAudioBankSlotData sfx_bank_slot = sfx_bank_slots[i];
+                    Debug.WriteLine("\tBank slot " + i + " size: " + sfx_bank_slot.BufferSize);
+                }*/
             }
         }
     }

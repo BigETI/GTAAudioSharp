@@ -96,8 +96,9 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="bankIndex">Bank index</param>
         /// <param name="audioIndex">Audio index</param>
+        /// <param name="bankSlot">Bank slot</param>
         /// <returns>Audio stream</returns>
-        public abstract Stream Open(uint bankIndex, uint audioIndex);
+        public abstract Stream Open(uint bankIndex, uint audioIndex, uint bankSlot);
 
         /// <summary>
         /// Dispose

@@ -96,6 +96,7 @@ namespace GTAAudioSharp
                                 List<GTAAudioLookupData>[] streams_lookup;
                                 Dictionary<string, uint> sfx_files_lookup = new Dictionary<string, uint>();
                                 Dictionary<string, uint> streams_files_lookup = new Dictionary<string, uint>();
+                                GTAAudioBankSlotData[] sfx_bank_slots = null;
                                 byte[] volume = null;
                                 using (FileStream stream = File.Open(pak_files_dat_path, FileMode.Open, FileAccess.Read))
                                 {
@@ -227,6 +228,29 @@ namespace GTAAudioSharp
                                         }
                                     }
                                 }
+                                using (FileStream stream = File.Open(bank_slot_dat_path, FileMode.Open, FileAccess.Read))
+                                {
+                                    using (BinaryReader reader = new BinaryReader(stream))
+                                    {
+                                        long stream_length = stream.Length;
+                                        ushort slots = reader.ReadUInt16();
+                                        if (stream_length >= ((slots * 4820L) + 2L))
+                                        {
+                                            sfx_bank_slots = new GTAAudioBankSlotData[slots];
+                                            for (ushort i = 0; i != slots; i++)
+                                            {
+                                                stream.Seek(4L, SeekOrigin.Current);
+                                                uint buffer_size = reader.ReadUInt32();
+                                                stream.Seek(4812L, SeekOrigin.Current);
+                                                sfx_bank_slots[i] = new GTAAudioBankSlotData(buffer_size);
+                                            }
+                                        }
+                                    }
+                                }
+                                if (sfx_bank_slots == null)
+                                {
+                                    sfx_bank_slots = new GTAAudioBankSlotData[0];
+                                }
                                 for (int i = 0; i < sfx_files.Length; i++)
                                 {
                                     string sfx_file = sfx_files[i];
@@ -249,11 +273,12 @@ namespace GTAAudioSharp
                                                         data = new GTAAudioSFXDataInfo[num_audio];
                                                         for (uint j = 0U; j != num_audio; j++)
                                                         {
-                                                            uint offset = reader.ReadUInt32();
-                                                            stream.Seek(sizeof(int), SeekOrigin.Current);
+                                                            uint sound_buffer_offset = reader.ReadUInt32();
+                                                            uint loop_offset = reader.ReadUInt32();
                                                             ushort sample_rate = reader.ReadUInt16();
+                                                            ushort sound_headroom = reader.ReadUInt16();
                                                             stream.Seek(sizeof(ushort), SeekOrigin.Current);
-                                                            data[j] = new GTAAudioSFXDataInfo(offset, sample_rate);
+                                                            data[j] = new GTAAudioSFXDataInfo(sound_buffer_offset, loop_offset, sample_rate, sound_headroom);
                                                         }
                                                     }
                                                 }
@@ -264,7 +289,7 @@ namespace GTAAudioSharp
                                     {
                                         data = new GTAAudioSFXDataInfo[0];
                                     }
-                                    sfx_audio_files[i] = new GTAAudioSFXFile(sfx_file, stream, sfx_lookup[i].ToArray(), data);
+                                    sfx_audio_files[i] = new GTAAudioSFXFile(sfx_file, stream, sfx_lookup[i].ToArray(), data, sfx_bank_slots);
                                     sfx_lookup[i].Clear();
                                 }
                                 for (int i = 0; i < streams_files.Length; i++)
@@ -327,7 +352,7 @@ namespace GTAAudioSharp
                                 {
                                     volume = new byte[0];
                                 }
-                                ret = new GTAAudioFiles(sfx_audio_files, streams_audio_files, sfx_files_lookup, streams_files_lookup, volume);
+                                ret = new GTAAudioFiles(sfx_audio_files, streams_audio_files, sfx_files_lookup, streams_files_lookup, sfx_bank_slots, volume);
                             }
                         }
                     }

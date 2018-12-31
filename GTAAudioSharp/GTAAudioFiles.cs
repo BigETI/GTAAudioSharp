@@ -33,6 +33,11 @@ namespace GTAAudioSharp
         private Dictionary<string, uint> streamsFilesLookup;
 
         /// <summary>
+        /// SFX bank slots
+        /// </summary>
+        private GTAAudioBankSlotData[] sfxBankSlots;
+
+        /// <summary>
         /// Script event volume
         /// </summary>
         private byte[] scriptEventVolume;
@@ -68,6 +73,32 @@ namespace GTAAudioSharp
         }
 
         /// <summary>
+        /// SFX bank slots
+        /// </summary>
+        public GTAAudioBankSlotData[] SFXBankSlots
+        {
+            get
+            {
+                if (sfxBankSlots == null)
+                {
+                    sfxBankSlots = new GTAAudioBankSlotData[0];
+                }
+                return sfxBankSlots.Clone() as GTAAudioBankSlotData[];
+            }
+        }
+
+        /// <summary>
+        /// Number of SFX bank slots
+        /// </summary>
+        public int NumSFXBankSlots
+        {
+            get
+            {
+                return ((sfxBankSlots == null) ? 0 : sfxBankSlots.Length);
+            }
+        }
+
+        /// <summary>
         /// Number of events
         /// </summary>
         public int NumScriptEvents
@@ -86,12 +117,13 @@ namespace GTAAudioSharp
         /// <param name="sfxFilesLookup">SFX banks files lookup</param>
         /// <param name="streamsFilesLookup">Streams banks files lookup</param>
         /// <param name="scriptEventVolume">Script event volume</param>
-        internal GTAAudioFiles(GTAAudioSFXFile[] sfxAudioFiles, GTAAudioStreamsFile[] streamsAudioFiles, Dictionary<string, uint> sfxFilesLookup, Dictionary<string, uint> streamsFilesLookup, byte[] scriptEventVolume)
+        internal GTAAudioFiles(GTAAudioSFXFile[] sfxAudioFiles, GTAAudioStreamsFile[] streamsAudioFiles, Dictionary<string, uint> sfxFilesLookup, Dictionary<string, uint> streamsFilesLookup, GTAAudioBankSlotData[] sfxBankSlots, byte[] scriptEventVolume)
         {
             this.sfxAudioFiles = sfxAudioFiles;
             this.streamsAudioFiles = streamsAudioFiles;
             this.sfxFilesLookup = sfxFilesLookup;
             this.streamsFilesLookup = streamsFilesLookup;
+            this.sfxBankSlots = sfxBankSlots;
             this.scriptEventVolume = scriptEventVolume;
         }
 
@@ -101,8 +133,9 @@ namespace GTAAudioSharp
         /// <param name="sfxIndex">SFX index</param>
         /// <param name="bankIndex">Bank Index</param>
         /// <param name="audioIndex">Audio index</param>
+        /// <param name="bankSlot">Bank slot</param>
         /// <returns>GTA audio stream</returns>
-        public GTAAudioStream OpenSFXAudioStreamByID(uint sfxIndex, uint bankIndex, uint audioIndex)
+        public GTAAudioStream OpenSFXAudioStreamByID(uint sfxIndex, uint bankIndex, uint audioIndex, uint bankSlot)
         {
             GTAAudioStream ret = null;
             if (sfxIndex < sfxAudioFiles.Length)
@@ -110,7 +143,7 @@ namespace GTAAudioSharp
                 GTAAudioSFXFile sfx_file = sfxAudioFiles[sfxIndex];
                 if (sfx_file != null)
                 {
-                    Stream stream = sfx_file.Open(bankIndex, audioIndex);
+                    Stream stream = sfx_file.Open(bankIndex, audioIndex, bankSlot);
                     if (stream != null)
                     {
                         if (stream is GTAAudioStream)
@@ -133,8 +166,9 @@ namespace GTAAudioSharp
         /// <param name="sfxName">SFX name</param>
         /// <param name="bankIndex">Bank index</param>
         /// <param name="audioIndex">Audio index</param>
+        /// <param name="bankSlot">Bank slot</param>
         /// <returns>GTA audio stream if successful, otherwise "null"</returns>
-        public GTAAudioStream OpenSFXAudioStreamByName(string sfxName, uint bankIndex, uint audioIndex)
+        public GTAAudioStream OpenSFXAudioStreamByName(string sfxName, uint bankIndex, uint audioIndex, uint bankSlot)
         {
             GTAAudioStream ret = null;
             if (sfxName != null)
@@ -142,7 +176,7 @@ namespace GTAAudioSharp
                 string key = sfxName.Trim().ToLower();
                 if (sfxFilesLookup.ContainsKey(key))
                 {
-                    ret = OpenSFXAudioStreamByID(sfxFilesLookup[key], bankIndex, audioIndex);
+                    ret = OpenSFXAudioStreamByID(sfxFilesLookup[key], bankIndex, audioIndex, bankSlot);
                 }
             }
             return ret;
@@ -152,13 +186,14 @@ namespace GTAAudioSharp
         /// Open SFX audio stream by script event index
         /// </summary>
         /// <param name="eventIndex"></param>
+        /// <param name="bankSlot">Bank slot</param>
         /// <returns>GTA audio stream if successful, otherwise "null"</returns>
-        public GTAAudioStream OpenSFXAudioStreamByScriptEventIndex(uint eventIndex)
+        public GTAAudioStream OpenSFXAudioStreamByScriptEventIndex(uint eventIndex, uint bankSlot)
         {
             GTAAudioStream ret = null;
             if (eventIndex >= 2000U)
             {
-                ret = OpenSFXAudioStreamByName("SCRIPT", (eventIndex - 2000U) / 200U, (eventIndex - 2000) % 200);
+                ret = OpenSFXAudioStreamByName("SCRIPT", (eventIndex - 2000U) / 200U, (eventIndex - 2000) % 200, bankSlot);
             }
             return ret;
         }

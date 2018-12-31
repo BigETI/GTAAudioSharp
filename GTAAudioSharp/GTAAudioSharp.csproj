@@ -43,6 +43,7 @@
     <Compile Include="CommitableMemoryStream.cs" />
     <Compile Include="EGTAAudioFilesMode.cs" />
     <Compile Include="DecodingBinaryReader.cs" />
+    <Compile Include="GTAAudioBankSlotData.cs" />
     <Compile Include="GTAAudioBeatData.cs" />
     <Compile Include="GTAAudioLookupData.cs" />
     <Compile Include="GTAAudio.cs" />

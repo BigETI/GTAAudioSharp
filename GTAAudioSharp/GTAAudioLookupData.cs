@@ -11,34 +11,12 @@ namespace GTAAudioSharp
         /// <summary>
         /// Offset
         /// </summary>
-        private uint offset;
+        public readonly uint Offset;
 
         /// <summary>
         /// Length
         /// </summary>
-        private uint length;
-
-        /// <summary>
-        /// Offset
-        /// </summary>
-        public uint Offset
-        {
-            get
-            {
-                return offset;
-            }
-        }
-
-        /// <summary>
-        /// Length
-        /// </summary>
-        public uint Length
-        {
-            get
-            {
-                return length;
-            }
-        }
+        public readonly uint Length;
 
         /// <summary>
         /// Constructor
@@ -47,8 +25,8 @@ namespace GTAAudioSharp
         /// <param name="length">Length</param>
         public GTAAudioLookupData(uint offset, uint length)
         {
-            this.offset = offset;
-            this.length = length;
+            Offset = offset;
+            Length = length;
         }
     }
 }

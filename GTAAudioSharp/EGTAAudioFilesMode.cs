@@ -11,7 +11,7 @@ namespace GTAAudioSharp
         /// <summary>
         /// Read
         /// </summary>
-        Read,
+        Read //,
 
         /// <summary>
         /// Create (not supported yet)

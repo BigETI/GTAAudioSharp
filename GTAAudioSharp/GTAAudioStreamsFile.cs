@@ -22,7 +22,22 @@ namespace GTAAudioSharp
         {
             get
             {
-                return beatsData;
+                if (beatsData == null)
+                {
+                    beatsData = new GTAAudioBeatData[0];
+                }
+                return beatsData.Clone() as GTAAudioBeatData[];
+            }
+        }
+
+        /// <summary>
+        /// Number of beats data
+        /// </summary>
+        public int NumBeatsData
+        {
+            get
+            {
+                return ((beatsData == null) ? 0 : beatsData.Length);
             }
         }
 
@@ -43,8 +58,9 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="bankIndex">Bank index</param>
         /// <param name="audioIndex">Audio index (unused)</param>
+        /// <param name="bankSlot">Bank slot (unused)</param>
         /// <returns>Audio stream</returns>
-        public override Stream Open(uint bankIndex, uint audioIndex)
+        public override Stream Open(uint bankIndex, uint audioIndex, uint bankSlot)
         {
             Stream ret = null;
             if (FileStream != null)
@@ -79,7 +95,7 @@ namespace GTAAudioSharp
         /// <returns>Audio stream</returns>
         public Stream Open(uint bankIndex)
         {
-            return Open(bankIndex, 0U);
+            return Open(bankIndex, 0U, 0U);
         }
     }
 }

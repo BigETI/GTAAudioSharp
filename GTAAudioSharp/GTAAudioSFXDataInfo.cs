@@ -9,46 +9,38 @@ namespace GTAAudioSharp
     internal struct GTAAudioSFXDataInfo
     {
         /// <summary>
-        /// Offset
+        /// Sound buffer offset
         /// </summary>
-        private uint offset;
+        public readonly uint SoundBufferOffset;
+
+        /// <summary>
+        /// Loop offset
+        /// </summary>
+        public readonly uint LoopOffset;
 
         /// <summary>
         /// Sample rate
         /// </summary>
-        private ushort sampleRate;
+        public readonly ushort SampleRate;
 
         /// <summary>
-        /// Offset
+        /// Sound headroom
         /// </summary>
-        public uint Offset
-        {
-            get
-            {
-                return offset;
-            }
-        }
-
-        /// <summary>
-        /// Sample rate
-        /// </summary>
-        public ushort SampleRate
-        {
-            get
-            {
-                return sampleRate;
-            }
-        }
+        public readonly ushort SoundHeadroom;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="offset">Offset</param>
+        /// <param name="soundBufferOffset">Sound buffer offset</param>
+        /// <param name="loopOffset">Loop offset</param>
         /// <param name="sampleRate">Sample rate</param>
-        public GTAAudioSFXDataInfo(uint offset, ushort sampleRate)
+        /// <param name="soundHeadroom">Sound headroom</param>
+        public GTAAudioSFXDataInfo(uint soundBufferOffset, uint loopOffset, ushort sampleRate, ushort soundHeadroom)
         {
-            this.offset = offset;
-            this.sampleRate = sampleRate;
+            SoundBufferOffset = soundBufferOffset;
+            LoopOffset = loopOffset;
+            SampleRate = sampleRate;
+            SoundHeadroom = soundHeadroom;
         }
     }
 }
