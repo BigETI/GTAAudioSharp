@@ -111,50 +111,59 @@ namespace GTAAudioSharpUnitTest
                 Assert.IsNotNull(files, "Files can't be opened. Please configure \"" + configPath + "\".");
                 GTAAudioSFXFile[] sfx_audio_files = files.SFXAudioFiles;
                 Assert.IsTrue(sfx_audio_files.Length == validSFXFiles.Length, "Missing SFX file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
-                for (int i = 0, j; i < sfx_audio_files.Length; i++)
+                for (int i = 0, j, k; i < sfx_audio_files.Length; i++)
                 {
                     GTAAudioSFXFile sfx_audio_file = sfx_audio_files[i];
                     if (sfx_audio_file != null)
                     {
                         Assert.IsTrue(sfx_audio_file.Name == validSFXFiles[i], "SFX file \"" + sfx_audio_file.Name + "\" is not \"" + validSFXFiles[i] + "\" at index " + i);
-                        /*Debug.WriteLine(sfx_audio_file.Name);
-                        Debug.WriteLine("\tNumber of audios: " + sfx_audio_file.NumAudios);
+                        Debug.WriteLine(sfx_audio_file.Name + ":");
                         Debug.WriteLine("\tNumber of banks: " + sfx_audio_file.NumBanks);
-                        for (j = 0; j < sfx_audio_file.AudioData.Length; j++)
+                        for (j = 0; j < sfx_audio_file.NumBanks; j++)
                         {
-                            GTAAudioSFXDataInfo audio_data = sfx_audio_file.AudioData[j];
-                            Debug.WriteLine("\t\t" + sfx_audio_file.Name + " audio " + j + ":");
-                            Debug.WriteLine("\t\t\tSample rate: " + audio_data.SampleRate);
-                            Debug.WriteLine("\t\t\tSound buffer offset: " + audio_data.SoundBufferOffset);
-                            Debug.WriteLine("\t\t\tLoop offset: " + audio_data.LoopOffset);
-                            Debug.WriteLine("\t\t\tSound headroom: " + audio_data.SoundHeadroom);
-                        }
-                        for (j = 0; j < sfx_audio_file.LookupData.Length; j++)
-                        {
-                            GTAAudioLookupData lookup_data = sfx_audio_file.LookupData[j];
+                            GTAAudioBankData bank_data = sfx_audio_file.GetBankData((uint)j);
                             Debug.WriteLine("\t\t" + sfx_audio_file.Name + " bank " + j + ":");
-                            Debug.WriteLine("\t\t\tLength: " + lookup_data.Length);
-                            Debug.WriteLine("\t\t\tOffset: " + lookup_data.Offset);
-                        }*/
+                            Debug.WriteLine("\t\t\tLength: " + bank_data.Length);
+                            Debug.WriteLine("\t\t\tOffset: " + bank_data.Offset);
+                            for (k = 0; k < bank_data.NumAudioClips; k++)
+                            {
+                                GTAAudioAudioClipData audio_clip_data = bank_data.GetAudioClipData((uint)k);
+                                Debug.WriteLine("\t\t\t" + sfx_audio_file.Name + " bank " + j + " audio " + k + ":");
+                                Debug.WriteLine("\t\t\t\tSample rate: " + audio_clip_data.SampleRate);
+                                Debug.WriteLine("\t\t\t\tSound buffer offset: " + audio_clip_data.SoundBufferOffset);
+                                Debug.WriteLine("\t\t\t\tLoop offset: " + audio_clip_data.LoopOffset);
+                                Debug.WriteLine("\t\t\t\tSound headroom: " + audio_clip_data.SoundHeadroom);
+                                Debug.WriteLine("\t\t\t\tLength: " + audio_clip_data.Length);
+                            }
+                        }
                     }
                 }
                 GTAAudioStreamsFile[] streams_audio_files = files.StreamsAudioFiles;
                 Assert.IsTrue(streams_audio_files.Length == validStreamsFiles.Length, "Missing streams file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
-                for (int i = 0; i < streams_audio_files.Length; i++)
+                for (int i = 0, j; i < streams_audio_files.Length; i++)
                 {
                     GTAAudioStreamsFile streams_audio_file = streams_audio_files[i];
                     if (streams_audio_file != null)
                     {
                         Assert.IsTrue(streams_audio_file.Name == validStreamsFiles[i], "Streams file \"" + streams_audio_file.Name + "\" is not \"" + validStreamsFiles[i] + "\" at index " + i);
+                        Debug.WriteLine(streams_audio_file.Name + ":");
+                        Debug.WriteLine("\tNumber of banks: " + streams_audio_file.NumBanks);
+                        for (j = 0; j < streams_audio_file.NumBanks; j++)
+                        {
+                            GTAAudioBankData bank_data = streams_audio_file.GetBankData((uint)j);
+                            Debug.WriteLine("\t\t" + streams_audio_file.Name + " bank " + j + ":");
+                            Debug.WriteLine("\t\t\tLength: " + bank_data.Length);
+                            Debug.WriteLine("\t\t\tOffset: " + bank_data.Offset);
+                        }
+                        for (j = 0; j < streams_audio_file.NumBeats; j++)
+                        {
+                            GTAAudioBeatData beat_data = streams_audio_file.GetBeatData((uint)j);
+                            Debug.WriteLine("\t\t\t" + streams_audio_file.Name + " beat " + j + ":");
+                            Debug.WriteLine("\t\t\t\tControl: " + beat_data.Control);
+                            Debug.WriteLine("\t\t\t\tTiming: " + beat_data.Timing);
+                        }
                     }
                 }
-                /*Debug.WriteLine("SFX bank slots: " + files.NumSFXBankSlots);
-                GTAAudioBankSlotData[] sfx_bank_slots = files.SFXBankSlots;
-                for (int i = 0; i < sfx_bank_slots.Length; i++)
-                {
-                    GTAAudioBankSlotData sfx_bank_slot = sfx_bank_slots[i];
-                    Debug.WriteLine("\tBank slot " + i + " size: " + sfx_bank_slot.BufferSize);
-                }*/
             }
         }
     }

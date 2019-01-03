@@ -22,9 +22,9 @@ namespace GTAAudioSharp
         private FileStream fileStream;
 
         /// <summary>
-        /// Lookup data
+        /// Bank data
         /// </summary>
-        private GTAAudioLookupData[] lookupData;
+        private GTAAudioBankData[] bankData;
 
         /// <summary>
         /// Name
@@ -53,17 +53,17 @@ namespace GTAAudioSharp
         }
 
         /// <summary>
-        /// Lookup data
+        /// Bank data
         /// </summary>
-        internal GTAAudioLookupData[] LookupData
+        internal GTAAudioBankData[] BankData
         {
             get
             {
-                if (lookupData == null)
+                if (bankData == null)
                 {
-                    lookupData = new GTAAudioLookupData[0];
+                    bankData = new GTAAudioBankData[0];
                 }
-                return lookupData;
+                return bankData;
             }
         }
 
@@ -74,7 +74,7 @@ namespace GTAAudioSharp
         {
             get
             {
-                return LookupData.Length;
+                return BankData.Length;
             }
         }
 
@@ -83,12 +83,69 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="name">Name</param>
         /// <param name="fileStream">File stream</param>
-        /// <param name="lookupData">Lookup data</param>
-        internal AGTAAudioFile(string name, FileStream fileStream, GTAAudioLookupData[] lookupData)
+        /// <param name="bankData">Bank data</param>
+        internal AGTAAudioFile(string name, FileStream fileStream, GTAAudioBankData[] bankData)
         {
             this.name = name;
             this.fileStream = fileStream;
-            this.lookupData = lookupData;
+            this.bankData = bankData;
+        }
+
+        /// <summary>
+        /// Is bank available
+        /// </summary>
+        /// <param name="bankIndex">Bank index</param>
+        /// <returns>"true" if bank is available, otherwise "false"</returns>
+        public bool IsBankAvailable(uint bankIndex)
+        {
+            return (bankIndex < NumBanks);
+        }
+
+        /// <summary>
+        /// Is audio clip available
+        /// </summary>
+        /// <param name="bankIndex">Bank index</param>
+        /// <param name="audioClipIndex">Bank index</param>
+        /// <returns>"true" if audio clip is available, otherwise "false"</returns>
+        public bool IsAudioClipAvailableFromBank(uint bankIndex, uint audioClipIndex)
+        {
+            return GetBankData(bankIndex).IsAudioClipAvailable(audioClipIndex);
+        }
+
+        /// <summary>
+        /// Get bank data
+        /// </summary>
+        /// <param name="bankIndex">Bank index</param>
+        /// <returns>Bank data</returns>
+        public GTAAudioBankData GetBankData(uint bankIndex)
+        {
+            if (!(IsBankAvailable(bankIndex)))
+            {
+                throw new IndexOutOfRangeException("Bank index: " + bankIndex + "; Number of banks: " + NumBanks);
+            }
+            return BankData[bankIndex];
+        }
+
+        /// <summary>
+        /// Get number of audio clips from bank
+        /// </summary>
+        /// <param name="bankIndex">Bank index</param>
+        /// <returns>Number of audio clips</returns>
+        public int GetNumAudioClipsFromBank(uint bankIndex)
+        {
+            return GetBankData(bankIndex).NumAudioClips;
+        }
+
+        /// <summary>
+        /// Get audio clip data
+        /// </summary>
+        /// <param name="bankIndex">Bank index</param>
+        /// <param name="audioClipIndex">Audio clip index</param>
+        /// <param name="result">Result</param>
+        /// <returns>Audio clip data</returns>
+        public GTAAudioAudioClipData GetAudioClipData(uint bankIndex, uint audioClipIndex)
+        {
+            return GetBankData(bankIndex).GetAudioClipData(audioClipIndex);
         }
 
         /// <summary>
@@ -98,7 +155,7 @@ namespace GTAAudioSharp
         /// <param name="audioIndex">Audio index</param>
         /// <param name="bankSlot">Bank slot</param>
         /// <returns>Audio stream</returns>
-        public abstract Stream Open(uint bankIndex, uint audioIndex, uint bankSlot);
+        public abstract Stream Open(uint bankIndex, uint audioIndex);
 
         /// <summary>
         /// Dispose

@@ -4,7 +4,7 @@
 namespace GTAAudioSharp
 {
     /// <summary>
-    /// GTA audio beat data
+    /// GTA audio beat data structure
     /// </summary>
     public struct GTAAudioBeatData
     {
@@ -23,7 +23,7 @@ namespace GTAAudioSharp
         /// </summary>
         /// <param name="timing">Timing</param>
         /// <param name="control">Control</param>
-        public GTAAudioBeatData(uint timing, uint control)
+        internal GTAAudioBeatData(uint timing, uint control)
         {
             Timing = timing;
             Control = control;

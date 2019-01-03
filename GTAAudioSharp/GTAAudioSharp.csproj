@@ -43,11 +43,10 @@
     <Compile Include="CommitableMemoryStream.cs" />
     <Compile Include="EGTAAudioFilesMode.cs" />
     <Compile Include="DecodingBinaryReader.cs" />
-    <Compile Include="GTAAudioBankSlotData.cs" />
     <Compile Include="GTAAudioBeatData.cs" />
-    <Compile Include="GTAAudioLookupData.cs" />
+    <Compile Include="GTAAudioBankData.cs" />
     <Compile Include="GTAAudio.cs" />
-    <Compile Include="GTAAudioSFXDataInfo.cs" />
+    <Compile Include="GTAAudioAudioClipData.cs" />
     <Compile Include="GTAAudioSFXFile.cs" />
     <Compile Include="GTAAudioFiles.cs" />
     <Compile Include="GTAAudioStream.cs" />

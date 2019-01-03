@@ -4,9 +4,9 @@
 namespace GTAAudioSharp
 {
     /// <summary>
-    /// GTA audio SFX data information class
+    /// GTA audio audio clip data structure
     /// </summary>
-    internal struct GTAAudioSFXDataInfo
+    public struct GTAAudioAudioClipData
     {
         /// <summary>
         /// Sound buffer offset
@@ -29,18 +29,25 @@ namespace GTAAudioSharp
         public readonly ushort SoundHeadroom;
 
         /// <summary>
+        /// Length
+        /// </summary>
+        public readonly uint Length;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="soundBufferOffset">Sound buffer offset</param>
         /// <param name="loopOffset">Loop offset</param>
         /// <param name="sampleRate">Sample rate</param>
         /// <param name="soundHeadroom">Sound headroom</param>
-        public GTAAudioSFXDataInfo(uint soundBufferOffset, uint loopOffset, ushort sampleRate, ushort soundHeadroom)
+        /// <param name="length">Length</param>
+        internal GTAAudioAudioClipData(uint soundBufferOffset, uint loopOffset, ushort sampleRate, ushort soundHeadroom, uint length)
         {
             SoundBufferOffset = soundBufferOffset;
             LoopOffset = loopOffset;
             SampleRate = sampleRate;
             SoundHeadroom = soundHeadroom;
+            Length = length;
         }
     }
 }

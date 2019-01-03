@@ -6,7 +6,7 @@
 namespace GTAAudioSharp
 {
     /// <summary>
-    /// Decoding binary reader
+    /// Decoding binary reader class
     /// </summary>
     public class DecodingBinaryReader : BinaryReader
     {
