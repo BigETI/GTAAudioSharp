@@ -125,6 +125,7 @@ namespace GTAAudioSharpUnitTest
                             Debug.WriteLine("\t\t" + sfx_audio_file.Name + " bank " + j + ":");
                             Debug.WriteLine("\t\t\tLength: " + bank_data.Length);
                             Debug.WriteLine("\t\t\tOffset: " + bank_data.Offset);
+                            Debug.WriteLine("\t\t\tNumber of audio clips: " + bank_data.NumAudioClips);
                             for (k = 0; k < bank_data.NumAudioClips; k++)
                             {
                                 GTAAudioAudioClipData audio_clip_data = bank_data.GetAudioClipData((uint)k);
