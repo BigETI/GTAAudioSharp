@@ -55,7 +55,6 @@ namespace GTAAudioSharp
         public static GTAAudioFiles Open(string directory, EGTAAudioFilesMode filesMode)
         {
             GTAAudioFiles ret = null;
-            FileShare fileShareType = FileShare.Read;
             try
             {
                 if (directory != null)
@@ -98,7 +97,7 @@ namespace GTAAudioSharp
                                 Dictionary<string, uint> sfx_files_lookup = new Dictionary<string, uint>();
                                 Dictionary<string, uint> streams_files_lookup = new Dictionary<string, uint>();
                                 byte[] volume = null;
-                                using (FileStream stream = File.Open(pak_files_dat_path, FileMode.Open, FileAccess.Read, fileShareType))
+                                using (FileStream stream = File.Open(pak_files_dat_path, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
                                     long stream_length = stream.Length;
                                     if ((stream_length % 52L) == 0L)
@@ -136,7 +135,7 @@ namespace GTAAudioSharp
                                     sfx_files = new string[0];
                                     sfx_audio_files = new GTAAudioSFXFile[0];
                                 }
-                                using (FileStream stream = File.Open(stream_paks_dat_path, FileMode.Open, FileAccess.Read, fileShareType))
+                                using (FileStream stream = File.Open(stream_paks_dat_path, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
                                     long stream_length = stream.Length;
                                     if ((stream_length % 16L) == 0L)
@@ -179,7 +178,7 @@ namespace GTAAudioSharp
                                 {
                                     sfx_bank_data[i] = new List<GTAAudioBankData>();
                                 }
-                                using (FileStream stream = File.Open(bank_lookup_dat_path, FileMode.Open, FileAccess.Read, fileShareType))
+                                using (FileStream stream = File.Open(bank_lookup_dat_path, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
                                     using (BinaryReader reader = new BinaryReader(stream))
                                     {
@@ -206,7 +205,7 @@ namespace GTAAudioSharp
                                 {
                                     streams_bank_data[i] = new List<GTAAudioBankData>();
                                 }
-                                using (FileStream stream = File.Open(trak_lookup_dat_path, FileMode.Open, FileAccess.Read, fileShareType))
+                                using (FileStream stream = File.Open(trak_lookup_dat_path, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
                                     using (BinaryReader reader = new BinaryReader(stream))
                                     {
@@ -237,7 +236,7 @@ namespace GTAAudioSharp
                                         string sfx_path = Path.Combine(sfx_directory, sfx_file);
                                         if (File.Exists(sfx_path))
                                         {
-                                            stream = File.Open(sfx_path, FileMode.Open, FileAccess.Read, fileShareType);
+                                            stream = File.Open(sfx_path, FileMode.Open, FileAccess.Read, FileShare.Read);
                                             if (stream != null)
                                             {
                                                 BinaryReader reader = new BinaryReader(stream);
@@ -301,7 +300,7 @@ namespace GTAAudioSharp
                                         string streams_path = Path.Combine(streams_directory, streams_file);
                                         if (File.Exists(streams_path))
                                         {
-                                            stream = File.Open(streams_path, FileMode.Open, FileAccess.Read, fileShareType);
+                                            stream = File.Open(streams_path, FileMode.Open, FileAccess.Read, FileShare.Read);
                                             if (stream != null)
                                             {
                                                 DecodingBinaryReader reader = new DecodingBinaryReader(stream);
@@ -339,7 +338,7 @@ namespace GTAAudioSharp
                                     streams_audio_files[i] = new GTAAudioStreamsFile(streams_file, stream, streams_bank_data[i].ToArray(), beats_data);
                                     streams_bank_data[i].Clear();
                                 }
-                                using (FileStream stream = File.Open(event_volume_dat_path, FileMode.Open, FileAccess.Read, fileShareType))
+                                using (FileStream stream = File.Open(event_volume_dat_path, FileMode.Open, FileAccess.Read, FileShare.Read))
                                 {
                                     volume = new byte[stream.Length];
                                     if (stream.Read(volume, 0, volume.Length) != volume.Length)
