@@ -6,24 +6,24 @@ namespace GTAAudioSharp
     /// <summary>
     /// GTA audio beat data structure
     /// </summary>
-    public struct GTAAudioBeatData
+    internal readonly struct GTAAudioBeatInformation : IGTAAudioBeatInformation
     {
         /// <summary>
         /// Timing
         /// </summary>
-        public readonly uint Timing;
+        public uint Timing { get; }
 
         /// <summary>
         /// Control
         /// </summary>
-        public readonly uint Control;
+        public uint Control { get; }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="timing">Timing</param>
         /// <param name="control">Control</param>
-        internal GTAAudioBeatData(uint timing, uint control)
+        public GTAAudioBeatInformation(uint timing, uint control)
         {
             Timing = timing;
             Control = control;

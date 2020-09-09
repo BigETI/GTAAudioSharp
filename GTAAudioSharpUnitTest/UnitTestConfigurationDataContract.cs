@@ -9,36 +9,36 @@ namespace GTAAudioSharpUnitTest
     /// Unit test configuration data contract class
     /// </summary>
     [DataContract]
-    public class UnitTestConfigDataContract
+    public class UnitTestConfigurationDataContract
     {
         /// <summary>
         /// Audio files directory
         /// </summary>
         [DataMember]
-        private string audioFilesDir;
+        private string audioFilesDirectoryPath;
 
         /// <summary>
         /// Audio files directory
         /// </summary>
-        public string AudioFilesDir
+        public string AudioFilesDirectoryPath
         {
             get
             {
-                if (audioFilesDir == null)
+                if (audioFilesDirectoryPath == null)
                 {
-                    audioFilesDir = "";
+                    audioFilesDirectoryPath = string.Empty;
                 }
-                return audioFilesDir;
+                return audioFilesDirectoryPath;
             }
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="audioFilesDir">Audio files directory</param>
-        public UnitTestConfigDataContract(string audioFilesDir)
+        /// <param name="audioFilesDirectoryPath">Audio files directory path</param>
+        public UnitTestConfigurationDataContract(string audioFilesDirectoryPath)
         {
-            this.audioFilesDir = audioFilesDir;
+            this.audioFilesDirectoryPath = audioFilesDirectoryPath;
         }
     }
 }

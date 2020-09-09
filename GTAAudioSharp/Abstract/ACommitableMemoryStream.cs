@@ -1,34 +1,37 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
-/// <summary>
-/// GTA audio sharp namespace
+/// GTA audio sharp
 /// </summary>
 namespace GTAAudioSharp
 {
     /// <summary>
-    /// Commitable memory stream class
+    /// Commitable memory stream abstract class
     /// </summary>
-    public class CommitableMemoryStream : MemoryStream
+    /// <typeparam name="T">Open stream type</typeparam>
+    public abstract class ACommitableMemoryStream<T> : MemoryStream
     {
         /// <summary>
         /// GTA audio file
         /// </summary>
-        private AGTAAudioFile gtaAudioFile;
+        public IGTAAudioFile<T> GTAAudioFile { get; }
+
+        /// <summary>
+        /// Is stream open
+        /// </summary>
+        public bool IsOpen { get; private set; } = true;
 
         /// <summary>
         /// On close
         /// </summary>
-        internal OnCloseGTAAudioFileEventHandler OnClose;
+        public GTAAudioFileClosedDelegate<T> OnClose;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
-        internal CommitableMemoryStream(AGTAAudioFile gtaAudioFile) : base()
-        {
-            this.gtaAudioFile = gtaAudioFile;
-        }
+        internal ACommitableMemoryStream(IGTAAudioFile<T> gtaAudioFile) : base() => GTAAudioFile = gtaAudioFile ?? throw new ArgumentNullException(nameof(gtaAudioFile));
 
         /// <summary>
         /// Constructor
@@ -36,10 +39,7 @@ namespace GTAAudioSharp
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
         /// <param name="buffer">Buffer</param>
-        internal CommitableMemoryStream(AGTAAudioFile gtaAudioFile, byte[] buffer) : base(buffer)
-        {
-            this.gtaAudioFile = gtaAudioFile;
-        }
+        internal ACommitableMemoryStream(IGTAAudioFile<T> gtaAudioFile, byte[] buffer) : base(buffer) => GTAAudioFile = gtaAudioFile ?? throw new ArgumentNullException(nameof(gtaAudioFile));
 
         /// <summary>
         /// Constructor
@@ -47,10 +47,7 @@ namespace GTAAudioSharp
         /// <param name="gtaAudioFile">GTA audio file</param>
         /// <param name="sampleRate">Sample rate</param>
         /// <param name="capacity">Capacity</param>
-        internal CommitableMemoryStream(AGTAAudioFile gtaAudioFile, int capacity) : base(capacity)
-        {
-            this.gtaAudioFile = gtaAudioFile;
-        }
+        internal ACommitableMemoryStream(IGTAAudioFile<T> gtaAudioFile, int capacity) : base(capacity) => GTAAudioFile = gtaAudioFile ?? throw new ArgumentNullException(nameof(gtaAudioFile));
 
         /// <summary>
         /// Constructor
@@ -59,10 +56,7 @@ namespace GTAAudioSharp
         /// <param name="sampleRate">Sample rate</param>
         /// <param name="buffer">Buffer</param>
         /// <param name="writable">Writable</param>
-        internal CommitableMemoryStream(AGTAAudioFile gtaAudioFile, byte[] buffer, bool writable) : base(buffer, writable)
-        {
-            this.gtaAudioFile = gtaAudioFile;
-        }
+        internal ACommitableMemoryStream(IGTAAudioFile<T> gtaAudioFile, byte[] buffer, bool writable) : base(buffer, writable) => GTAAudioFile = gtaAudioFile ?? throw new ArgumentNullException(nameof(gtaAudioFile));
 
         /// <summary>
         /// Constructor
@@ -72,10 +66,7 @@ namespace GTAAudioSharp
         /// <param name="buffer">Buffer</param>
         /// <param name="index">Index</param>
         /// <param name="count">Count</param>
-        internal CommitableMemoryStream(AGTAAudioFile gtaAudioFile, byte[] buffer, int index, int count) : base(buffer, index, count)
-        {
-            this.gtaAudioFile = gtaAudioFile;
-        }
+        internal ACommitableMemoryStream(IGTAAudioFile<T> gtaAudioFile, byte[] buffer, int index, int count) : base(buffer, index, count) => GTAAudioFile = gtaAudioFile ?? throw new ArgumentNullException(nameof(gtaAudioFile));
 
         /// <summary>
         /// Constructor
@@ -86,10 +77,7 @@ namespace GTAAudioSharp
         /// <param name="index">Index</param>
         /// <param name="count">Count</param>
         /// <param name="writable">Writable</param>
-        internal CommitableMemoryStream(AGTAAudioFile gtaAudioFile, byte[] buffer, int index, int count, bool writable) : base(buffer, index, count, writable)
-        {
-            this.gtaAudioFile = gtaAudioFile;
-        }
+        internal ACommitableMemoryStream(IGTAAudioFile<T> gtaAudioFile, byte[] buffer, int index, int count, bool writable) : base(buffer, index, count, writable) => GTAAudioFile = gtaAudioFile ?? throw new ArgumentNullException(nameof(gtaAudioFile));
 
         /// <summary>
         /// Constructor
@@ -101,20 +89,17 @@ namespace GTAAudioSharp
         /// <param name="count">Count</param>
         /// <param name="writable">Writable</param>
         /// <param name="publiclyVisible">Publicly visible</param>
-        internal CommitableMemoryStream(AGTAAudioFile gtaAudioFile, byte[] buffer, int index, int count, bool writable, bool publiclyVisible) : base(buffer, index, count, writable, publiclyVisible)
-        {
-            this.gtaAudioFile = gtaAudioFile;
-        }
+        internal ACommitableMemoryStream(IGTAAudioFile<T> gtaAudioFile, byte[] buffer, int index, int count, bool writable, bool publiclyVisible) : base(buffer, index, count, writable, publiclyVisible) => GTAAudioFile = gtaAudioFile ?? throw new ArgumentNullException(nameof(gtaAudioFile));
 
         /// <summary>
-        /// Close();
+        /// Close stream
         /// </summary>
         public override void Close()
         {
-            if (OnClose != null)
+            if (IsOpen)
             {
-                OnClose(gtaAudioFile, this);
-                OnClose = null;
+                OnClose?.Invoke(GTAAudioFile, this);
+                IsOpen = false;
             }
             base.Close();
         }

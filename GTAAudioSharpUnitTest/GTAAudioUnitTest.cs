@@ -1,6 +1,7 @@
 ﻿using GTAAudioSharp;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Json;
@@ -13,23 +14,22 @@ namespace GTAAudioSharpUnitTest
     /// <summary>
     /// GTA audio unit test class
     /// </summary>
-    [TestClass]
     public class GTAAudioUnitTest
     {
         /// <summary>
-        /// Config serializer
+        /// Configuration file path
         /// </summary>
-        private static readonly string configPath = Path.Combine(Environment.CurrentDirectory, "config.json");
+        private static readonly string configurationFilePath = Path.Combine(Environment.CurrentDirectory, "config.json");
 
         /// <summary>
         /// Config serializer
         /// </summary>
-        private static readonly DataContractJsonSerializer configSerializer = new DataContractJsonSerializer(typeof(UnitTestConfigDataContract));
+        private static readonly DataContractJsonSerializer configurationJSONSerializer = new DataContractJsonSerializer(typeof(UnitTestConfigurationDataContract));
 
         /// <summary>
-        /// Valid SFX files
+        /// Valid SFX file names
         /// </summary>
-        private static readonly string[] validSFXFiles = new string[]
+        private static readonly string[] validSFXFileNames = new string[]
         {
             "FEET",
             "GENRL",
@@ -43,13 +43,13 @@ namespace GTAAudioSharpUnitTest
         };
 
         /// <summary>
-        /// Valid streams files
+        /// Valid streams file names
         /// </summary>
-        private static readonly string[] validStreamsFiles = new string[]
+        private static readonly string[] validStreamsFileNames = new string[]
         {
             "AA",
             "ADVERTS",
-            "",
+            string.Empty,
             "AMBIENCE",
             "BEATS",
             "CH",
@@ -69,100 +69,98 @@ namespace GTAAudioSharpUnitTest
         /// <summary>
         /// Configuration
         /// </summary>
-        private UnitTestConfigDataContract config;
+        private UnitTestConfigurationDataContract configuration;
 
         /// <summary>
         /// Configuration
         /// </summary>
-        public UnitTestConfigDataContract Config
+        public UnitTestConfigurationDataContract Configuration
         {
             get
             {
-                if (config == null)
+                if (configuration == null)
                 {
-                    if (File.Exists(configPath))
+                    if (File.Exists(configurationFilePath))
                     {
-                        using (FileStream stream = File.Open(configPath, FileMode.Open, FileAccess.Read))
-                        {
-                            config = configSerializer.ReadObject(stream) as UnitTestConfigDataContract;
-                        }
+                        using FileStream configuration_file_stream = File.Open(configurationFilePath, FileMode.Open, FileAccess.Read);
+                        configuration = configurationJSONSerializer.ReadObject(configuration_file_stream) as UnitTestConfigurationDataContract;
                     }
                     else
                     {
-                        config = new UnitTestConfigDataContract(Path.Combine(Environment.CurrentDirectory, "audio"));
-                        using (FileStream stream = File.Open(configPath, FileMode.Create))
-                        {
-                            configSerializer.WriteObject(stream, config);
-                        }
+                        configuration = new UnitTestConfigurationDataContract(Path.Combine(Environment.CurrentDirectory, "audio"));
+                        using FileStream configuration_file_stream = File.Open(configurationFilePath, FileMode.Create);
+                        configurationJSONSerializer.WriteObject(configuration_file_stream, configuration);
                     }
                 }
-                return config;
+                return configuration;
             }
         }
 
         /// <summary>
         /// Read file test
         /// </summary>
-        [TestMethod]
+        [Test]
         public void ReadFileTest()
         {
-            using (GTAAudioFiles files = GTAAudio.OpenRead(Config.AudioFilesDir))
+            using IGTAAudioFiles gta_audio_files = GTAAudio.OpenRead(Configuration.AudioFilesDirectoryPath);
+            Assert.IsNotNull(gta_audio_files, $"Files can't be opened. Please configure \"{ configurationFilePath }\".");
+            IReadOnlyList<IGTAAudioSFXFile> sfx_audio_files = gta_audio_files.SFXAudioFiles;
+            Assert.AreEqual(validSFXFileNames.Length, sfx_audio_files.Count, $"Missing SFX file entries. { gta_audio_files.SFXAudioFiles.Count } files found, not { validSFXFileNames.Length }.");
+            for (int i = 0, j, k; i < sfx_audio_files.Count; i++)
             {
-                Assert.IsNotNull(files, "Files can't be opened. Please configure \"" + configPath + "\".");
-                GTAAudioSFXFile[] sfx_audio_files = files.SFXAudioFiles;
-                Assert.IsTrue(sfx_audio_files.Length == validSFXFiles.Length, "Missing SFX file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
-                for (int i = 0, j, k; i < sfx_audio_files.Length; i++)
+                IGTAAudioSFXFile sfx_audio_file = sfx_audio_files[i];
+                if (sfx_audio_file != null)
                 {
-                    GTAAudioSFXFile sfx_audio_file = sfx_audio_files[i];
-                    if (sfx_audio_file != null)
+                    IReadOnlyList<IGTAAudioBankInformation> sfx_audio_banks = sfx_audio_file.Banks;
+                    Assert.AreEqual(validSFXFileNames[i], sfx_audio_file.Name, $"SFX file \"{ sfx_audio_file.Name }\" is not \"{ validSFXFileNames[i] }\" at index { i }.");
+                    TestContext.WriteLine($"{ sfx_audio_file.Name }:");
+                    Debug.WriteLine($"\tNumber of banks: { sfx_audio_banks.Count }");
+                    for (j = 0; j < sfx_audio_banks.Count; j++)
                     {
-                        Assert.IsTrue(sfx_audio_file.Name == validSFXFiles[i], "SFX file \"" + sfx_audio_file.Name + "\" is not \"" + validSFXFiles[i] + "\" at index " + i);
-                        Debug.WriteLine(sfx_audio_file.Name + ":");
-                        Debug.WriteLine("\tNumber of banks: " + sfx_audio_file.NumBanks);
-                        for (j = 0; j < sfx_audio_file.NumBanks; j++)
+                        IGTAAudioBankInformation sfx_audio_bank = sfx_audio_banks[j];
+                        IReadOnlyList<IGTAAudioAudioClipInformation> sfx_audio_bank_audio_clips = sfx_audio_bank.AudioClips;
+                        TestContext.WriteLine($"\t\t{ sfx_audio_file.Name } bank { j }:");
+                        TestContext.WriteLine($"\t\t\tLength: { sfx_audio_bank.Length }");
+                        TestContext.WriteLine($"\t\t\tOffset: { sfx_audio_bank.Offset }");
+                        TestContext.WriteLine($"\t\t\tNumber of audio clips: { sfx_audio_bank_audio_clips.Count }");
+                        for (k = 0; k < sfx_audio_bank_audio_clips.Count; k++)
                         {
-                            GTAAudioBankData bank_data = sfx_audio_file.GetBankData((uint)j);
-                            Debug.WriteLine("\t\t" + sfx_audio_file.Name + " bank " + j + ":");
-                            Debug.WriteLine("\t\t\tLength: " + bank_data.Length);
-                            Debug.WriteLine("\t\t\tOffset: " + bank_data.Offset);
-                            Debug.WriteLine("\t\t\tNumber of audio clips: " + bank_data.NumAudioClips);
-                            for (k = 0; k < bank_data.NumAudioClips; k++)
-                            {
-                                GTAAudioAudioClipData audio_clip_data = bank_data.GetAudioClipData((uint)k);
-                                Debug.WriteLine("\t\t\t" + sfx_audio_file.Name + " bank " + j + " audio " + k + ":");
-                                Debug.WriteLine("\t\t\t\tSample rate: " + audio_clip_data.SampleRate);
-                                Debug.WriteLine("\t\t\t\tSound buffer offset: " + audio_clip_data.SoundBufferOffset);
-                                Debug.WriteLine("\t\t\t\tLoop offset: " + audio_clip_data.LoopOffset);
-                                Debug.WriteLine("\t\t\t\tSound headroom: " + audio_clip_data.SoundHeadroom);
-                                Debug.WriteLine("\t\t\t\tLength: " + audio_clip_data.Length);
-                            }
+                            IGTAAudioAudioClipInformation sfx_audio_bank_audio_clip = sfx_audio_bank_audio_clips[k];
+                            TestContext.WriteLine($"\t\t\t{ sfx_audio_file.Name } bank { j } audio { k }:");
+                            TestContext.WriteLine($"\t\t\t\tSample rate: { sfx_audio_bank_audio_clip.SampleRate }");
+                            TestContext.WriteLine($"\t\t\t\tSound buffer offset: { sfx_audio_bank_audio_clip.SoundBufferOffset }");
+                            TestContext.WriteLine($"\t\t\t\tLoop offset: { sfx_audio_bank_audio_clip.LoopOffset }");
+                            TestContext.WriteLine($"\t\t\t\tSound headroom: { sfx_audio_bank_audio_clip.SoundHeadroom }");
+                            TestContext.WriteLine($"\t\t\t\tLength: { sfx_audio_bank_audio_clip.Length }");
                         }
                     }
                 }
-                GTAAudioStreamsFile[] streams_audio_files = files.StreamsAudioFiles;
-                Assert.IsTrue(streams_audio_files.Length == validStreamsFiles.Length, "Missing streams file entries. " + files.SFXAudioFiles.Length + " files found, not " + validSFXFiles.Length);
-                for (int i = 0, j; i < streams_audio_files.Length; i++)
+            }
+            IReadOnlyList<IGTAAudioStreamsFile> streams_audio_files = gta_audio_files.StreamsAudioFiles;
+            Assert.AreEqual(validStreamsFileNames.Length, streams_audio_files.Count, $"Missing streams file entries. { gta_audio_files.SFXAudioFiles.Count } files found, not { validSFXFileNames.Length }.");
+            for (int i = 0, j; i < streams_audio_files.Count; i++)
+            {
+                IGTAAudioStreamsFile streams_audio_file = streams_audio_files[i];
+                if (streams_audio_file != null)
                 {
-                    GTAAudioStreamsFile streams_audio_file = streams_audio_files[i];
-                    if (streams_audio_file != null)
+                    IReadOnlyList<IGTAAudioBankInformation> streams_audio_file_banks = streams_audio_file.Banks;
+                    IReadOnlyList<IGTAAudioBeatInformation> streams_audio_file_beats = streams_audio_file.Beats;
+                    Assert.AreEqual(validStreamsFileNames[i], streams_audio_file.Name, $"Streams file \"{ streams_audio_file.Name }\" is not \"{ validStreamsFileNames[i] }\" at index { i }.");
+                    TestContext.WriteLine($"{ streams_audio_file.Name }:");
+                    TestContext.WriteLine($"\tNumber of banks: { streams_audio_file_banks.Count }");
+                    for (j = 0; j < streams_audio_file_banks.Count; j++)
                     {
-                        Assert.IsTrue(streams_audio_file.Name == validStreamsFiles[i], "Streams file \"" + streams_audio_file.Name + "\" is not \"" + validStreamsFiles[i] + "\" at index " + i);
-                        Debug.WriteLine(streams_audio_file.Name + ":");
-                        Debug.WriteLine("\tNumber of banks: " + streams_audio_file.NumBanks);
-                        for (j = 0; j < streams_audio_file.NumBanks; j++)
-                        {
-                            GTAAudioBankData bank_data = streams_audio_file.GetBankData((uint)j);
-                            Debug.WriteLine("\t\t" + streams_audio_file.Name + " bank " + j + ":");
-                            Debug.WriteLine("\t\t\tLength: " + bank_data.Length);
-                            Debug.WriteLine("\t\t\tOffset: " + bank_data.Offset);
-                        }
-                        for (j = 0; j < streams_audio_file.NumBeats; j++)
-                        {
-                            GTAAudioBeatData beat_data = streams_audio_file.GetBeatData((uint)j);
-                            Debug.WriteLine("\t\t\t" + streams_audio_file.Name + " beat " + j + ":");
-                            Debug.WriteLine("\t\t\t\tControl: " + beat_data.Control);
-                            Debug.WriteLine("\t\t\t\tTiming: " + beat_data.Timing);
-                        }
+                        IGTAAudioBankInformation streams_audio_file_bank = streams_audio_file_banks[j];
+                        TestContext.WriteLine($"\t\t{ streams_audio_file.Name } bank { j }:");
+                        TestContext.WriteLine($"\t\t\tLength: { streams_audio_file_bank.Length }");
+                        TestContext.WriteLine($"\t\t\tOffset: { streams_audio_file_bank.Offset }");
+                    }
+                    for (j = 0; j < streams_audio_file_beats.Count; j++)
+                    {
+                        IGTAAudioBeatInformation beat_data = streams_audio_file_beats[j];
+                        TestContext.WriteLine($"\t\t\t{ streams_audio_file.Name } beat { j }:");
+                        TestContext.WriteLine($"\t\t\t\tControl: { beat_data.Control }");
+                        TestContext.WriteLine($"\t\t\t\tTiming: { beat_data.Timing }");
                     }
                 }
             }

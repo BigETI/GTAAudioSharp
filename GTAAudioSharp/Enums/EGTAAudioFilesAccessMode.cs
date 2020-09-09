@@ -4,23 +4,23 @@
 namespace GTAAudioSharp
 {
     /// <summary>
-    /// GTA audio files mode enumerator
+    /// GTA audio files access mode enumerator
     /// </summary>
-    public enum EGTAAudioFilesMode
+    public enum EGTAAudioFilesAccessMode
     {
         /// <summary>
         /// Read
         /// </summary>
-        Read //,
+        Read,
 
         /// <summary>
         /// Create (not supported yet)
         /// </summary>
-        //Create,
+        Create,
 
         /// <summary>
         /// Update (not supported yet)
         /// </summary>
-        //Update
+        Update
     }
 }
